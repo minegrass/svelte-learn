@@ -1,10 +1,14 @@
 <script>
     import AddCount from './components/AddCount.svelte';
-import ShowCount from './components/showCount.svelte';
-import { interval } from './storeItem';
+    import ShowCount from './components/showCount.svelte';
+    import TodoItem from './components/Todo-item.svelte';
+    import ProgressItem from './components/tweenTest.svelte'
+    import Springy from './components/Springy.svelte';
+    import { interval } from './storeItem';
     import { onMount } from 'svelte';
+    import { toDoItems } from './storeItem';
 
-    let toDoList = [{id:crypto.randomUUID(),text:"item1"},{id:crypto.randomUUID(),text:"item2"}]
+
     let toDoTextInput = ""
     let isToggleForm = false
     const toggleForm = () => {
@@ -12,8 +16,11 @@ import { interval } from './storeItem';
     }
     const submitToDo = () => {
         if(toDoTextInput === "") return
-        toDoList = [...toDoList, {id:crypto.randomUUID(),text:toDoTextInput}]
+        toDoItems.update((items) => {
+            return [...items, {id: crypto.randomUUID(), title: toDoTextInput,done: false}]
+        })
         toDoTextInput = ""
+        isToggleForm = false
     }
     onMount(()=>{
         console.log("this run newssss")
@@ -22,10 +29,8 @@ import { interval } from './storeItem';
 
 <h1>To Do App</h1>
 
-{#each toDoList as item (item.id)}
-<div class="todo-item-div">
-    <p>{item.text}</p>
-</div>
+{#each $toDoItems as item (item.id)}
+    <TodoItem itemID={item.id} itemText={item.title}/>
 {/each}
 {#if (isToggleForm)}
 <div class="todo-item-div">
@@ -37,6 +42,9 @@ import { interval } from './storeItem';
 
 <ShowCount/>
 <AddCount/>
+<ProgressItem/>
+<div style="background:gray;width:100%;height:1px;margin:10px;"/>
+<Springy/>
 
 <h1>
     Keep adding : {$interval}
@@ -47,5 +55,9 @@ import { interval } from './storeItem';
         border: 1px solid black;
         margin: 10px;
         padding: 10px;
+        display:flex;
+        flex-direction: row;
+        align-items: center;
     }
+
 </style>
